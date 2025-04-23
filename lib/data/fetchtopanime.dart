@@ -1,0 +1,16 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../model/anime_model.dart';
+
+Future<List<Anime>> fetchTopAnime(int page) async {
+  final response = await http.get(
+    Uri.parse('https://api.jikan.moe/v4/top/anime?page=$page'),
+  );
+
+  if (response.statusCode == 200) {
+    final List<dynamic> animeList = json.decode(response.body)['data'];
+    return animeList.map((anime) => Anime.fromJson(anime)).toList();
+  } else {
+    throw Exception('Failed to load anime');
+  }
+}

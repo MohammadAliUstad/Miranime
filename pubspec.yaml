@@ -1,0 +1,43 @@
+name: anitomo
+description: A Flutter app to explore anime using the Jikan API.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.7.2 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Networking
+  http: ^1.3.0
+
+  # UI & Icons
+  cupertino_icons: ^1.0.8
+  cached_network_image: ^3.3.1
+  flutter_svg: ^2.0.9
+  shimmer: ^3.0.0
+  google_fonts: ^6.1.0
+
+  # Routing
+  go_router: ^13.0.0
+
+  # State management/Dependency injection
+  provider: ^6.1.1
+
+  # External link launcher
+  url_launcher: ^6.2.5
+
+  # JSON serialization
+  json_annotation: ^4.8.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
+
+flutter:
+  uses-material-design: true
