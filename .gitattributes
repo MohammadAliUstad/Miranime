@@ -1,0 +1,16 @@
+# Dart files
+*.dart linguist-language=Dart
+
+# Ignore generated files from language stats
+*.g.dart linguist-generated=true
+*.freezed.dart linguist-generated=true
+*.gen.dart linguist-generated=true
+
+# Normalize line endings
+* text=auto
+
+# Image assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
