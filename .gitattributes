@@ -1,5 +1,10 @@
-# Dart files
+# .gitattributes
 *.dart linguist-language=Dart
+*.cpp linguist-vendored
+*.h linguist-vendored
+*.java linguist-vendored
+*.kt linguist-vendored
+*.swift linguist-vendored
 
 # Ignore generated files from language stats
 *.g.dart linguist-generated=true

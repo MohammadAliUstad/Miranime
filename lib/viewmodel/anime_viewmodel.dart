@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../model/anime_model.dart';
 import '../repository/anime_repository.dart';
 
@@ -33,6 +34,16 @@ class AnimeViewModel extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<Anime?> fetchAnimeById(int malId) async {
+    try {
+      final anime = await _repository.getAnimeById(malId);
+      return anime;
+    } catch (e) {
+      debugPrint("Error fetching anime by ID: $e");
+      return null;
     }
   }
 }

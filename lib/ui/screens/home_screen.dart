@@ -13,6 +13,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -21,6 +23,23 @@ class _HomeScreenState extends State<HomeScreen> {
         Provider.of<AnimeViewModel>(context, listen: false).loadTopAnime();
       }
     });
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300) {
+      final viewModel = Provider.of<AnimeViewModel>(context, listen: false);
+      if (!viewModel.isLoading && viewModel.hasMore) {
+        viewModel.loadTopAnime();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -34,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           return GridView.builder(
+            controller: _scrollController,
             padding: const EdgeInsets.all(8),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -41,12 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 10,
               childAspectRatio: 0.7,
             ),
-            itemCount: viewModel.animeList.length + (viewModel.hasMore ? 1 : 0),
+            itemCount: viewModel.animeList.length,
             itemBuilder: (context, index) {
-              if (index == viewModel.animeList.length) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
               final anime = viewModel.animeList[index];
               return AnimeCard(
                 title: anime.title,
@@ -56,24 +72,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DetailsScreen(url: anime.url),
+                      builder: (context) => DetailsScreen(malId: anime.malID),
                     ),
                   );
                 },
               );
-
             },
           );
-        },
-      ),
-      floatingActionButton: Consumer<AnimeViewModel>(
-        builder: (context, viewModel, child) {
-          return viewModel.hasMore
-              ? FloatingActionButton(
-                onPressed: viewModel.loadTopAnime,
-                child: const Icon(Icons.arrow_downward),
-              )
-              : const SizedBox.shrink();
         },
       ),
     );
