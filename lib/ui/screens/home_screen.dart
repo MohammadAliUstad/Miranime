@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../viewmodel/anime_viewmodel.dart';
+import '../../viewmodel/anime_viewmodel.dart';
+import '../components/animecard.dart';
 import 'details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,13 +16,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Trigger the initial API call
     Future.microtask(() {
       if (mounted) {
-        Provider.of<AnimeViewModel>(
-            context,
-            listen: false
-        ).loadTopAnime();
+        Provider.of<AnimeViewModel>(context, listen: false).loadTopAnime();
       }
     });
   }
@@ -36,7 +33,14 @@ class _HomeScreenState extends State<HomeScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return ListView.builder(
+          return GridView.builder(
+            padding: const EdgeInsets.all(8),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 0.7,
+            ),
             itemCount: viewModel.animeList.length + (viewModel.hasMore ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == viewModel.animeList.length) {
@@ -44,21 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
               }
 
               final anime = viewModel.animeList[index];
-              return ListTile(
-                leading: Image.network(
-                  anime.imageUrl,
-                  width: 50,
-                  height: 70,
-                  fit: BoxFit.cover,
-                ),
-                title: Text(anime.title),
-                subtitle: Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.yellow),
-                    const SizedBox(width: 4),
-                    Text('${anime.score}'),
-                  ],
-                ),
+              return AnimeCard(
+                title: anime.title,
+                largeImageUrl: anime.largeImageUrl,
+                score: anime.score,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -68,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               );
+
             },
           );
         },

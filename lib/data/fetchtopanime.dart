@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import '../model/anime_model.dart';
 
 Future<List<Anime>> fetchTopAnime(int page) async {

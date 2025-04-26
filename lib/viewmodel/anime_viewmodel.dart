@@ -8,16 +8,13 @@ class AnimeViewModel extends ChangeNotifier {
   AnimeViewModel(this._repository);
 
   final List<Anime> _animeList = [];
-
   List<Anime> get animeList => _animeList;
 
   bool _isLoading = false;
-
   bool get isLoading => _isLoading;
 
   int _currentPage = 1;
   bool _hasMore = true;
-
   bool get hasMore => _hasMore;
 
   Future<void> loadTopAnime() async {

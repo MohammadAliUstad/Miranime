@@ -25,6 +25,11 @@ dependencies:
   # State management/Dependency injection
   provider: ^6.1.1
 
+  # Animated Text
+  animated_text_kit: ^4.2.2
+  marquee: ^2.2.3
+
+
   # External link launcher
   url_launcher: ^6.2.5
 
