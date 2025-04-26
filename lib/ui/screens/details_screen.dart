@@ -13,6 +13,8 @@ class DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final animeViewModel = Provider.of<AnimeViewModel>(context, listen: false);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       body: FutureBuilder<Anime?>(
@@ -28,174 +30,123 @@ class DetailsScreen extends StatelessWidget {
 
           final anime = snapshot.data!;
 
-          return Stack(
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.white, Color(0xFFE0F7FA)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+          return CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                expandedHeight: 300,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Hero(
+                    tag: 'anime_${anime.malID}', // Optional for hero animations
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(24),
+                        bottomRight: Radius.circular(24),
+                      ),
+                      child: Image.network(
+                        anime.largeImageUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
+                backgroundColor: colorScheme.surface,
+                surfaceTintColor: colorScheme.surfaceTint,
               ),
-
-              SafeArea(
-                child: SingleChildScrollView(
+              SliverToBoxAdapter(
+                child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.network(
-                            anime.largeImageUrl,
-                            width: double.infinity,
-                            height: 300,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
 
+                      // Title
                       Center(
                         child: Text(
                           anime.title,
                           textAlign: TextAlign.center,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.headlineSmall?.copyWith(
+                          style: textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
 
+                      // Score
                       Center(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: Colors.amber.shade600,
-                            borderRadius: BorderRadius.circular(20),
+                            color: colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(24),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
-                                Icons.star,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 4),
+                              Icon(Icons.star, color: colorScheme.onPrimaryContainer, size: 20),
+                              const SizedBox(width: 6),
                               Text(
                                 anime.score.toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: colorScheme.onPrimaryContainer,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 4,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Synopsis',
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                anime.synopsis,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium?.copyWith(height: 1.5),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 4,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Genres',
-                                style: Theme.of(context).textTheme.titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children:
-                                    anime.genres.map((genre) {
-                                      return Chip(
-                                        label: Text(genre),
-                                        backgroundColor:
-                                            Colors.blueAccent.shade100,
-                                        labelStyle: const TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      );
-                                    }).toList(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
                       const SizedBox(height: 24),
+
+                      // Synopsis
+                      _InfoSection(
+                        title: 'Synopsis',
+                        child: Text(
+                          anime.synopsis,
+                          style: textTheme.bodyMedium?.copyWith(height: 1.5),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Genres
+                      _InfoSection(
+                        title: 'Genres',
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: anime.genres.map((genre) {
+                            return Chip(
+                              label: Text(genre),
+                              backgroundColor: colorScheme.secondaryContainer,
+                              labelStyle: TextStyle(color: colorScheme.onSecondaryContainer),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // Button
                       Center(
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            launchUrl(Uri.parse(anime.url));
-                          },
+                        child: FilledButton.icon(
+                          onPressed: () => launchUrl(Uri.parse(anime.url)),
                           icon: const Icon(Icons.open_in_new),
                           label: const Text('View More Info'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal.shade400,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 14,
-                            ),
-                            textStyle: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 30),
+
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
@@ -204,6 +155,38 @@ class DetailsScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _InfoSection extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _InfoSection({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Material(
+          color: colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: child,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:anitomo/ui/screens/home_screen.dart';
+import 'package:anitomo/ui/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -31,10 +32,11 @@ class AnimeApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Anime Info',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        brightness: Brightness.dark,
-      ),
+
+      theme: monochromeLightTheme,
+      darkTheme: monochromeDarkTheme,
+
+      themeMode: ThemeMode.system,
       home: HomeScreen(),
     );
   }

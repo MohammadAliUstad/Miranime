@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../viewmodel/anime_viewmodel.dart';
-import '../components/animecard.dart';
+import '../components/anime_card.dart';
 import 'details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,8 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 300) {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 300) {
       final viewModel = Provider.of<AnimeViewModel>(context, listen: false);
       if (!viewModel.isLoading && viewModel.hasMore) {
         viewModel.loadTopAnime();
@@ -44,8 +43,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Top Anime')),
+      appBar: AppBar(
+        title: const Text('Top Anime'),
+        centerTitle: true,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        elevation: 0,
+      ),
       body: Consumer<AnimeViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.isLoading && viewModel.animeList.isEmpty) {
@@ -54,12 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
           return GridView.builder(
             controller: _scrollController,
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 0.7,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.65,
             ),
             itemCount: viewModel.animeList.length,
             itemBuilder: (context, index) {

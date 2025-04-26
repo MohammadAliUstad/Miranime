@@ -1,6 +1,6 @@
-import 'package:anitomo/data/fetchtopanime.dart';
+import 'package:anitomo/data/fetch_top_anime.dart';
 
-import '../data/fetchanimebyid.dart';
+import '../data/fetch_anime_by_id.dart';
 import '../model/anime_model.dart';
 import 'anime_repository.dart';
 
