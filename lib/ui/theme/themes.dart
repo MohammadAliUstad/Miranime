@@ -4,6 +4,7 @@ import 'colors.dart';
 
 final ThemeData monochromeDarkTheme = ThemeData(
   useMaterial3: true,
+  fontFamily: 'Product Sans',
   brightness: Brightness.dark,
 
   colorScheme: ColorScheme(
@@ -61,6 +62,7 @@ final ThemeData monochromeDarkTheme = ThemeData(
 
 final ThemeData monochromeLightTheme = ThemeData(
   useMaterial3: true,
+  fontFamily: 'Product Sans',
   brightness: Brightness.light,
 
   colorScheme: ColorScheme(
