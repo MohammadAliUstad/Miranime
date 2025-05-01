@@ -1,4 +1,4 @@
-import 'package:anitomo/ui/screens/home_screen.dart';
+import 'package:anitomo/ui/screens/main_screen.dart';
 import 'package:anitomo/ui/theme/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +14,8 @@ void main() {
         Provider<AnimeRepository>(create: (context) => AnimeRepositoryImpl()),
         ChangeNotifierProvider<AnimeViewModel>(
           create:
-              (context) => AnimeViewModel(
+              (context) =>
+              AnimeViewModel(
                 Provider.of<AnimeRepository>(context, listen: false),
               ),
         ),
@@ -37,7 +38,7 @@ class AnimeApp extends StatelessWidget {
       darkTheme: monochromeDarkTheme,
 
       themeMode: ThemeMode.system,
-      home: HomeScreen(),
+      home: MainScreen(),
     );
   }
 }
