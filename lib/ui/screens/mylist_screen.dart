@@ -6,10 +6,7 @@ class MyListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My List'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('My List'), centerTitle: true),
       body: Center(
         child: Text(
           'You haven\'t added any anime yet!',

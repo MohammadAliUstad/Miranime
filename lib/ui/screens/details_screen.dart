@@ -18,7 +18,7 @@ class DetailsScreen extends StatelessWidget {
 
     return Scaffold(
       body: FutureBuilder<Anime?>(
-        future: animeViewModel.fetchAnimeById(malId),
+        future: animeViewModel.getAnimeById(malId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

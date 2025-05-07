@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../viewmodel/anime_viewmodel.dart';
-import '../components/anime_card.dart';
-import 'details_screen.dart';
+import '../components/featured_carousel.dart';
+import '../components/genre_section.dart';
+import '../loading_skeletons/featured_carousel_skeleton.dart';
+import '../loading_skeletons/genre_section_skeleton.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,80 +16,107 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
+  final List<Map<String, dynamic>> _genres = [
+    {"id": 1, "name": "Action"},
+    {"id": 4, "name": "Comedy"},
+    {"id": 30, "name": "Sports"},
+    {"id": 22, "name": "Romance"},
+  ];
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      if (mounted) {
-        Provider.of<AnimeViewModel>(context, listen: false).loadTopAnime();
-      }
-    });
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 300) {
-      final viewModel = Provider.of<AnimeViewModel>(context, listen: false);
-      if (!viewModel.isLoading && viewModel.hasMore) {
-        viewModel.loadTopAnime();
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+    final vm = context.read<AnimeViewModel>();
+    vm.getTopAnime();
+    vm.fetchGenresSequentially();
   }
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final color = theme.colorScheme;
 
     return Scaffold(
+      backgroundColor: color.surface,
       appBar: AppBar(
-        title: const Text('Top Anime'),
-        centerTitle: true,
-        backgroundColor: colorScheme.surface,
-        foregroundColor: colorScheme.onSurface,
+        title: Text(
+          'Miranime',
+          style: theme.textTheme.headlineMedium?.copyWith(
+            color: color.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: color.surface,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            color: color.onSurface,
+            onPressed: () {
+              final q = _searchController.text.trim();
+              if (q.isNotEmpty) {
+                context.read<AnimeViewModel>().getAnimeBySearch(q);
+              }
+            },
+          ),
+        ],
       ),
       body: Consumer<AnimeViewModel>(
-        builder: (context, viewModel, child) {
-          if (viewModel.isLoading && viewModel.animeList.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        builder: (context, vm, _) {
+          return ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            physics: const BouncingScrollPhysics(),
+            children: [
+              // Featured Carousel or Skeleton
+              _buildSectionTitle("Featured Anime", theme),
+              const SizedBox(height: 12),
+              vm.isLoadingForHomeScreen
+                  ? FeaturedCarouselSkeleton()
+                  : FeaturedCarousel(viewModel: vm),
+              const SizedBox(height: 24),
 
-          return GridView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(12),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.65,
-            ),
-            itemCount: viewModel.animeList.length,
-            itemBuilder: (context, index) {
-              final anime = viewModel.animeList[index];
-              return AnimeCard(
-                title: anime.title,
-                largeImageUrl: anime.largeImageUrl,
-                score: anime.score,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DetailsScreen(malId: anime.malID),
-                    ),
-                  );
-                },
-              );
-            },
+              ..._genres.map((g) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child:
+                      vm.isLoadingForHomeScreen
+                          ? GenreSectionSkeleton(genreName: g['name'])
+                          : GenreSection(
+                            genreId: g['id'],
+                            genreName: g['name'],
+                            viewModel: vm,
+                          ),
+                );
+              }),
+            ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String t, ThemeData th) {
+    return Text(
+      t,
+      style: th.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.w600,
+        color: th.colorScheme.onSurface,
+      ),
+    );
+  }
+
+  Widget _buildShimmerEffect({required double height}) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
       ),
     );
   }

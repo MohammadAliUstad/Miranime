@@ -6,10 +6,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Profile'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -17,9 +14,9 @@ class ProfileScreen extends StatelessWidget {
           children: [
             Text(
               'Welcome, Otaku!',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
 
@@ -28,9 +25,7 @@ class ProfileScreen extends StatelessWidget {
               title: const Text('Dark Mode'),
               trailing: Switch(
                 value: Theme.of(context).brightness == Brightness.dark,
-                onChanged: (value) {
-                  // Optional: Implement theme toggle logic
-                },
+                onChanged: (value) {},
               ),
             ),
 
