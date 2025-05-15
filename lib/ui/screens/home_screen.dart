@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../viewmodel/anime_viewmodel.dart';
 import '../components/featured_carousel.dart';
 import '../components/genre_section.dart';
 import '../loading_skeletons/featured_carousel_skeleton.dart';
 import '../loading_skeletons/genre_section_skeleton.dart';
+import 'search_screen.dart'; // ✅ Import SearchScreen
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,8 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _searchController = TextEditingController();
-
   final List<Map<String, dynamic>> _genres = [
     {"id": 1, "name": "Action"},
     {"id": 4, "name": "Comedy"},
@@ -30,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     final vm = context.read<AnimeViewModel>();
     vm.getTopAnime();
-    vm.fetchGenresSequentially();
+    vm.fetchGenresConcurrently();
   }
 
   @override
@@ -55,10 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.search),
             color: color.onSurface,
             onPressed: () {
-              final q = _searchController.text.trim();
-              if (q.isNotEmpty) {
-                context.read<AnimeViewModel>().getAnimeBySearch(q);
-              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SearchScreen()),
+              );
             },
           ),
         ],
@@ -73,21 +71,23 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildSectionTitle("Featured Anime", theme),
               const SizedBox(height: 12),
               vm.isLoadingForHomeScreen
-                  ? FeaturedCarouselSkeleton()
+                  ? const FeaturedCarouselSkeleton()
                   : FeaturedCarousel(viewModel: vm),
               const SizedBox(height: 24),
 
+              // Genre Sections or Skeletons
               ..._genres.map((g) {
+                final genreId = g['id'] as int;
+                final genreName = g['name'] as String;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16),
-                  child:
-                      vm.isLoadingForHomeScreen
-                          ? GenreSectionSkeleton(genreName: g['name'])
-                          : GenreSection(
-                            genreId: g['id'],
-                            genreName: g['name'],
-                            viewModel: vm,
-                          ),
+                  child: vm.isGenreLoading(genreId)
+                      ? GenreSectionSkeleton(genreName: genreName)
+                      : GenreSection(
+                    genreId: genreId,
+                    genreName: genreName,
+                    viewModel: vm,
+                  ),
                 );
               }),
             ],
@@ -97,26 +97,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String t, ThemeData th) {
+  Widget _buildSectionTitle(String title, ThemeData theme) {
     return Text(
-      t,
-      style: th.textTheme.titleLarge?.copyWith(
+      title,
+      style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
-        color: th.colorScheme.onSurface,
-      ),
-    );
-  }
-
-  Widget _buildShimmerEffect({required double height}) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      child: Container(
-        height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
+        color: theme.colorScheme.onSurface,
       ),
     );
   }

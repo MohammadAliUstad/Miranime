@@ -90,6 +90,8 @@ class AnimeViewModel extends ChangeNotifier {
   }
 
   Future<void> getAnimeByGenre(List<int> genreIds) async {
+    final genreFetchFutures = <Future<void>>[];
+
     for (var genreId in genreIds) {
       if (_genreAnimeMap.containsKey(genreId) || _loadingGenres.contains(genreId)) continue;
 
@@ -97,17 +99,20 @@ class AnimeViewModel extends ChangeNotifier {
       _errorMessage = null;
       notifyListeners();
 
-      try {
-        await Future.delayed(const Duration(seconds: 1));
-        final genreAnime = await _repository.getAnimeByGenre(genreId);
+      genreFetchFutures.add(_repository.getAnimeByGenre(genreId).then((genreAnime) {
         _genreAnimeMap[genreId] = genreAnime;
-      } catch (e) {
+        notifyListeners(); // Notify listeners immediately after genre data is fetched
+      }).catchError((e) {
         _errorMessage = "Error fetching genre $genreId: $e";
-      } finally {
+        notifyListeners(); // Notify listeners even on error
+      }).whenComplete(() {
         _loadingGenres.remove(genreId);
         notifyListeners();
-      }
+      }));
     }
+
+    // Wait for all genre fetch tasks to complete concurrently
+    await Future.wait(genreFetchFutures);
   }
 
   bool isGenreLoading(int genreId) => _loadingGenres.contains(genreId);
@@ -120,14 +125,21 @@ class AnimeViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchGenresSequentially() async {
+  // Fetch genres concurrently without delay
+  Future<void> fetchGenresConcurrently() async {
     _isGenresLoading = true;
     notifyListeners();
 
-    for (var genre in _genres) {
-      await Future.delayed(const Duration(seconds: 1));
-      await getAnimeByGenre([genre['id']]);
-    }
+    final genreIds = _genres.map<int>((genre) => genre['id'] as int).toList();
+
+    // First batch: first 2 genres
+    await getAnimeByGenre(genreIds.sublist(0, 2));
+
+    // Wait 1 second (to respect API rate limit)
+    await Future.delayed(const Duration(seconds: 1));
+
+    // Second batch: remaining genres
+    await getAnimeByGenre(genreIds.sublist(2));
 
     _isGenresLoading = false;
     notifyListeners();
