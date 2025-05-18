@@ -1,6 +1,6 @@
-import 'package:anitomo/ui/screens/main_screen.dart';
-import 'package:anitomo/ui/theme/themes.dart';
 import 'package:flutter/material.dart';
+import 'package:miranime/ui/screens/main_screen.dart';
+import 'package:miranime/ui/theme/themes.dart';
 import 'package:provider/provider.dart';
 
 import 'data/anime_api_service.dart';

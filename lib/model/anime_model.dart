@@ -21,6 +21,17 @@ class Anime {
   final List<String> producers;
   final String source;
 
+  // ✅ Newly added fields
+  final String type;
+  final String season;
+  final int year;
+  final int popularity;
+  final int rank;
+  final int members;
+  final int favorites;
+  final String duration;
+  final String trailerYoutubeId;
+
   Anime({
     required this.malID,
     required this.title,
@@ -43,6 +54,15 @@ class Anime {
     required this.trailerImageUrl,
     required this.producers,
     required this.source,
+    required this.type,
+    required this.season,
+    required this.year,
+    required this.popularity,
+    required this.rank,
+    required this.members,
+    required this.favorites,
+    required this.duration,
+    required this.trailerYoutubeId,
   });
 
   factory Anime.fromJson(Map<String, dynamic> json) {
@@ -60,18 +80,29 @@ class Anime {
       airingStatus: json['status'] ?? '',
       airingDateRange: json['aired']['string'] ?? '',
       episodeCount: json['episodes'].toString(),
-      broadcastTime: json['broadcast']['string'] ?? '',
+      broadcastTime: json['broadcast']?['string'] ?? '',
       rating: json['rating'] ?? '',
       background: json['background'] ?? '',
       genres: List<String>.from(
         json['genres']?.map((genre) => genre['name']) ?? [],
       ),
-      trailerUrl: json['trailer']['url'] ?? '',
-      trailerImageUrl: json['trailer']['images']['image_url'] ?? '',
+      trailerUrl: json['trailer']?['url'] ?? '',
+      trailerImageUrl: json['trailer']?['images']?['image_url'] ?? '',
       producers: List<String>.from(
         json['producers']?.map((producer) => producer['name']) ?? [],
       ),
       source: json['source'] ?? '',
+
+      // 🔹 Newly added field parsers
+      type: json['type'] ?? '',
+      season: json['season'] ?? '',
+      year: json['year'] ?? 0,
+      popularity: json['popularity'] ?? 0,
+      rank: json['rank'] ?? 0,
+      members: json['members'] ?? 0,
+      favorites: json['favorites'] ?? 0,
+      duration: json['duration'] ?? '',
+      trailerYoutubeId: json['trailer']?['youtube_id'] ?? '',
     );
   }
 }

@@ -65,7 +65,7 @@ class AnimeCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Score: ${anime.score ?? 'N/A'}",
+                      "Score: ${anime.score}",
                       style: TextStyle(color: color.onSurfaceVariant),
                     ),
                   ],

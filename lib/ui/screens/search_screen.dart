@@ -28,7 +28,6 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<AnimeViewModel>();
-    final color = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(

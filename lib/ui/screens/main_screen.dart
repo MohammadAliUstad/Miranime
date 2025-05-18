@@ -1,5 +1,5 @@
-import 'package:anitomo/ui/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:miranime/ui/screens/profile_screen.dart';
 
 import 'home_screen.dart';
 import 'mylist_screen.dart';
