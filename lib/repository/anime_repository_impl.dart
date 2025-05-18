@@ -1,5 +1,6 @@
 import '../data/anime_api_service.dart';
 import '../model/anime_model.dart';
+import '../model/episode_model.dart';
 import 'anime_repository.dart';
 
 class AnimeRepositoryImpl implements AnimeRepository {
@@ -25,5 +26,10 @@ class AnimeRepositoryImpl implements AnimeRepository {
   @override
   Future<Anime> getAnimeById(int malId) async {
     return await apiService.fetchAnimeById(malId);
+  }
+
+  @override
+  Future<List<Episode>> getEpisodeById(int malId) async {
+    return await apiService.fetchEpisodeById(malId);
   }
 }

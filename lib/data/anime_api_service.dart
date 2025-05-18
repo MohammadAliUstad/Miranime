@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../model/anime_model.dart';
+import '../model/episode_model.dart';
 
 class ApiService {
   static const String _baseUrl = 'https://api.jikan.moe/v4';
@@ -54,6 +55,16 @@ class ApiService {
       return Anime.fromJson(animeData);
     } else {
       throw Exception('Failed to load anime details for ID $malId');
+    }
+  }
+
+  Future<List<Episode>> fetchEpisodeById(int malId) async {
+    final response = await http.get(Uri.parse('https://api.jikan.moe/v4/anime/$malId/episodes'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return (data['data'] as List).map((e) => Episode.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to load episodes');
     }
   }
 }

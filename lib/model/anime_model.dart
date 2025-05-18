@@ -20,8 +20,6 @@ class Anime {
   final String trailerImageUrl;
   final List<String> producers;
   final String source;
-
-  // ✅ Newly added fields
   final String type;
   final String season;
   final int year;
@@ -92,8 +90,6 @@ class Anime {
         json['producers']?.map((producer) => producer['name']) ?? [],
       ),
       source: json['source'] ?? '',
-
-      // 🔹 Newly added field parsers
       type: json['type'] ?? '',
       season: json['season'] ?? '',
       year: json['year'] ?? 0,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:miranime/ui/screens/main_screen.dart';
+import 'package:miranime/ui/theme/theme_provider.dart';
 import 'package:miranime/ui/theme/themes.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +13,7 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider()),
         Provider<AnimeRepository>(
           create: (context) => AnimeRepositoryImpl(apiService: ApiService()),
         ),
@@ -35,13 +37,15 @@ class AnimeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Anime Info',
       theme: monochromeLightTheme,
       darkTheme: monochromeDarkTheme,
-      themeMode: ThemeMode.system,
-      home: MainScreen(),
+      themeMode: themeProvider.themeMode,
+      home: const MainScreen(),
     );
   }
 }

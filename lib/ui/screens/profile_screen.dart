@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../theme/theme_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -24,8 +27,10 @@ class ProfileScreen extends StatelessWidget {
               leading: const Icon(Icons.dark_mode),
               title: const Text('Dark Mode'),
               trailing: Switch(
-                value: Theme.of(context).brightness == Brightness.dark,
-                onChanged: (value) {},
+                value: Provider.of<ThemeProvider>(context).isDarkMode,
+                onChanged: (value) {
+                  Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
+                },
               ),
             ),
 

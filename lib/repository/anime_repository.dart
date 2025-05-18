@@ -1,3 +1,5 @@
+import 'package:miranime/model/episode_model.dart';
+
 import '../model/anime_model.dart';
 
 abstract class AnimeRepository {
@@ -8,4 +10,6 @@ abstract class AnimeRepository {
   Future<List<Anime>> getAnimeByGenre(int genreId);
 
   Future<Anime> getAnimeById(int malId);
+
+  Future<List<Episode>> getEpisodeById(int malId);
 }

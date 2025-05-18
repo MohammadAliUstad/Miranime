@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../model/anime_model.dart';
+import '../model/episode_model.dart';
 import '../repository/anime_repository.dart';
 
 class AnimeViewModel extends ChangeNotifier {
@@ -8,8 +9,43 @@ class AnimeViewModel extends ChangeNotifier {
   AnimeViewModel({required AnimeRepository repository}) : _repository = repository;
 
   final List<Anime> _topAnimeList = [];
+  final List<Episode> _episodeList = [];
   final List<Anime> _searchResultsList = [];
   final Map<int, List<Anime>> _genreAnimeMap = {};
+
+  // Map of malId to list of episodes
+  final Map<int, List<Episode>> _episodesMap = {};
+  // Track loading state per malId
+  final Set<int> _episodesLoadingSet = {};
+  // Track errors per malId
+  final Map<int, String> _episodeErrorMap = {};
+
+  // -------------------------
+  // New episode state getters:
+  bool isLoadingEpisodesFor(int malId) => _episodesLoadingSet.contains(malId);
+
+  List<Episode> getEpisodesFor(int malId) => _episodesMap[malId] ?? [];
+
+  String? getEpisodeErrorFor(int malId) => _episodeErrorMap[malId];
+
+  // Fetch episodes for a specific anime id
+  Future<void> getEpisodeById(int malId) async {
+    if (_episodesLoadingSet.contains(malId)) return; // Avoid duplicate fetches
+
+    _episodesLoadingSet.add(malId);
+    _episodeErrorMap.remove(malId);
+    notifyListeners();
+
+    try {
+      final fetchedEpisodes = await _repository.getEpisodeById(malId);
+      _episodesMap[malId] = fetchedEpisodes;
+    } catch (e) {
+      _episodeErrorMap[malId] = "Error fetching episodes: $e";
+    } finally {
+      _episodesLoadingSet.remove(malId);
+      notifyListeners();
+    }
+  }
 
   String? _errorMessage;
   bool _isTopLoading = false;
@@ -21,6 +57,7 @@ class AnimeViewModel extends ChangeNotifier {
   bool _hasMore = true;
 
   List<Anime> get topAnimeList => _topAnimeList;
+  List<Episode> get episodeList => _episodeList;
   List<Anime> get searchResultsList => _searchResultsList;
   Map<int, List<Anime>> get genreAnimeMap => _genreAnimeMap;
   String? get errorMessage => _errorMessage;

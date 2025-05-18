@@ -23,6 +23,8 @@ dependencies:
   # Networking
   http: ^1.3.0
 
+  shared_preferences: ^2.2.2
+
   # UI & Icons
   cupertino_icons: ^1.0.8
   cached_network_image: ^3.3.1
