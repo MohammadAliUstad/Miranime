@@ -5,8 +5,21 @@ class MyListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = theme.colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('My List'), centerTitle: true),
+      backgroundColor: color.surface,
+      appBar: AppBar(
+        title: Text(
+          'My List',
+          style: theme.textTheme.headlineMedium?.copyWith(
+            color: color.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: color.surface,
+      ),
       body: Center(
         child: Text(
           'You haven\'t added any anime yet!',

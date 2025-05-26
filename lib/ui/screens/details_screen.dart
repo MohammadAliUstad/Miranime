@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../model/anime_model.dart';
 import '../../viewmodel/anime_viewmodel.dart';
+import '../components/episodes_section.dart';
 
 class DetailsScreen extends StatefulWidget {
   final int malId;
@@ -274,97 +275,6 @@ class _ActionButton extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
-}
-
-class EpisodeListSection extends StatelessWidget {
-  final int malId;
-  const EpisodeListSection({super.key, required this.malId});
-
-  @override
-  Widget build(BuildContext context) {
-    final ts = Theme.of(context).textTheme;
-    return Consumer<AnimeViewModel>(
-      builder: (context, vm, _) {
-        if (vm.isLoadingEpisodesFor(malId)) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        final episodeError = vm.getEpisodeErrorFor(malId);
-        if (episodeError != null) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Text(
-                episodeError,
-                style: ts.bodyMedium?.copyWith(color: Colors.redAccent),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          );
-        }
-
-        final episodes = vm.getEpisodesFor(malId);
-        if (episodes.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Text(
-                'No episodes available.',
-                style: ts.bodyMedium,
-              ),
-            ),
-          );
-        }
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Episodes',
-              style: ts.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: episodes.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final episode = episodes[index];
-                return Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  margin: EdgeInsets.zero,
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    title: Text(
-                      '${index + 1}: ${episode.title}',
-                      style: ts.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.play_circle, color: Colors.blueAccent),
-                      tooltip: 'Watch Episode',
-                      onPressed: () async {
-                        final uri = Uri.parse(episode.url);
-                        if (await canLaunchUrl(uri)) {
-                          await launchUrl(uri);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Could not open the episode link')),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }

@@ -50,8 +50,7 @@ class GenreSection extends StatelessWidget {
                   return AnimationConfiguration.staggeredList(
                     position: i,
                     duration: const Duration(milliseconds: 375),
-                    child: SlideAnimation(
-                      verticalOffset: 50,
+
                       child: FadeInAnimation(
                         child: GestureDetector(
                           onTap: () {
@@ -68,14 +67,7 @@ class GenreSection extends StatelessWidget {
                             width: 140,
                             margin: const EdgeInsets.only(right: 12),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: cs.shadow.withAlpha(64),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
+                              borderRadius: BorderRadius.circular(16)
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(16),
@@ -96,18 +88,21 @@ class GenreSection extends StatelessWidget {
                                     ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(16),
-                                      child: Image.network(
-                                        anime.largeImageUrl,
-                                        width: 140,
-                                        height: 230,
-                                        fit: BoxFit.cover,
-                                        filterQuality: FilterQuality.high,
-                                        loadingBuilder: (context, child, loadingProgress) => child,
-                                        errorBuilder:
-                                            (_, __, ___) => const Center(
-                                              child: Icon(Icons.broken_image),
-                                            ),
+                                      child: Container(
+                                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                        child: Image.network(
+                                          anime.largeImageUrl,
+                                          width: 140,
+                                          height: 230,
+                                          fit: BoxFit.cover,
+                                          filterQuality: FilterQuality.high,
+                                          loadingBuilder: (context, child, loadingProgress) => child,
+                                          errorBuilder: (_, __, ___) => const Center(
+                                            child: Icon(Icons.broken_image),
+                                          ),
+                                        ),
                                       ),
+
                                     ),
                                   ),
 
@@ -157,7 +152,6 @@ class GenreSection extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ),
                   );
                 },
               ),

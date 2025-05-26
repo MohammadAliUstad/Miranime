@@ -22,9 +22,7 @@ class ApiService {
   }
 
   Future<List<Anime>> fetchAnimeBySearch(String query) async {
-    final url = Uri.parse('$_baseUrl/anime?q=$query');
-
-    final response = await http.get(url);
+    final response = await http.get(Uri.parse('$_baseUrl/anime?q=$query'));
 
     if (response.statusCode == 200) {
       final List<dynamic> animeList = json.decode(response.body)['data'];
@@ -35,9 +33,9 @@ class ApiService {
   }
 
   Future<List<Anime>> fetchAnimeByGenre(int genreId) async {
-    final url = Uri.parse('$_baseUrl/anime?genres=$genreId');
-
-    final response = await http.get(url);
+    final response = await http.get(
+      Uri.parse('$_baseUrl/anime?genres=$genreId'),
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> animeList = json.decode(response.body)['data'];
@@ -59,10 +57,13 @@ class ApiService {
   }
 
   Future<List<Episode>> fetchEpisodeById(int malId) async {
-    final response = await http.get(Uri.parse('https://api.jikan.moe/v4/anime/$malId/episodes'));
+    final response = await http.get(
+      Uri.parse('https://api.jikan.moe/v4/anime/$malId/episodes'),
+    );
+
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return (data['data'] as List).map((e) => Episode.fromJson(e)).toList();
+      final List<dynamic> episodeList = json.decode(response.body)['data'];
+      return episodeList.map((episode) => Episode.fromJson(episode)).toList();
     } else {
       throw Exception('Failed to load episodes');
     }

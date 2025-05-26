@@ -39,31 +39,24 @@ class FeaturedCarousel extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(64),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
-                      anime.largeImageUrl,
-                      fit: BoxFit.cover,
-                      filterQuality: FilterQuality.high,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        return child;
-                      },
-                      errorBuilder:
-                          (context, error, stackTrace) =>
-                              const Center(child: Icon(Icons.broken_image)),
+                    Container(
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      child: Image.network(
+                        anime.largeImageUrl,
+                        fit: BoxFit.cover,
+                        filterQuality: FilterQuality.high,
+                        loadingBuilder: (context, child, loadingProgress) =>
+                        child,
+                        errorBuilder: (context, error, stackTrace) =>
+                        const Center(child: Icon(Icons.broken_image)),
+                      ),
                     ),
-
                     Positioned(
                       bottom: 0,
                       left: 0,
@@ -82,7 +75,6 @@ class FeaturedCarousel extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     Positioned(
                       left: 16,
                       right: 16,

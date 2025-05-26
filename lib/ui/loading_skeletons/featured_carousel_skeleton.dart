@@ -6,7 +6,6 @@ class FeaturedCarouselSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use softer, darker grays for a calmer shimmer
     final baseColor = Colors.grey.shade800;
     final highlightColor = Colors.grey.shade700;
 

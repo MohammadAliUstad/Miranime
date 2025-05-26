@@ -18,6 +18,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void _startSearch() {
     final trimmed = _controller.text.trim();
     if (trimmed.isNotEmpty) {
+      FocusScope.of(context).unfocus();
       setState(() {
         _query = trimmed;
       });
@@ -28,37 +29,73 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<AnimeViewModel>();
+    final cs = Theme.of(context).colorScheme;
+    final ts = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          controller: _controller,
-          onSubmitted: (_) => _startSearch(),
-          decoration: const InputDecoration(
-            hintText: 'Search anime...',
-            border: InputBorder.none,
+        backgroundColor: cs.surface,
+        elevation: 0,
+        centerTitle: false,
+        titleSpacing: 0,
+        title: Container(
+          height: 40,
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          autofocus: true,
-          textInputAction: TextInputAction.search,
+          child: TextField(
+            controller: _controller,
+            onSubmitted: (_) => _startSearch(),
+            autofocus: true,
+            textInputAction: TextInputAction.search,
+            style: ts.bodyMedium?.copyWith(color: cs.onSurface),
+            cursorColor: cs.primary,
+            decoration: InputDecoration(
+              hintText: 'Search anime...',
+              hintStyle: ts.bodyMedium?.copyWith(color: cs.onSurface.withOpacity(0.5)),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              isDense: true,
+              suffixIcon: IconButton(
+                icon: Icon(Icons.search, color: cs.primary),
+                onPressed: _startSearch,
+                tooltip: 'Search',
+              ),
+            ),
+          ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: _startSearch,
-          ),
-        ],
       ),
-      body: vm.isSearchLoading
-          ? const Center(child: CircularProgressIndicator())
-          : vm.searchResultsList.isEmpty && _query.isNotEmpty
-          ? const Center(child: Text("No results found."))
-          : ListView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: vm.searchResultsList.length,
-        itemBuilder: (context, index) {
-          final anime = vm.searchResultsList[index];
-          return AnimeCard(anime: anime);
-        },
+
+
+
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child:
+            vm.isSearchLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _query.isNotEmpty && vm.searchResultsList.isEmpty
+                ? Center(
+                  child: Text(
+                    'No results found.',
+                    style: ts.bodyLarge?.copyWith(color: cs.onSurface),
+                  ),
+                )
+                : ListView.separated(
+                  itemCount: vm.searchResultsList.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final anime = vm.searchResultsList[index];
+                    return AnimeCard(anime: anime);
+                  },
+                ),
       ),
     );
   }

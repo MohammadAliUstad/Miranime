@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:miranime/ui/screens/about_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../theme/theme_provider.dart';
@@ -8,8 +9,21 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = theme.colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile'), centerTitle: true),
+      backgroundColor: color.surface,
+      appBar: AppBar(
+        title: Text(
+          'Profile',
+          style: theme.textTheme.headlineMedium?.copyWith(
+            color: color.onSurface,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: color.surface,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -29,7 +43,10 @@ class ProfileScreen extends StatelessWidget {
               trailing: Switch(
                 value: Provider.of<ThemeProvider>(context).isDarkMode,
                 onChanged: (value) {
-                  Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
+                  Provider.of<ThemeProvider>(
+                    context,
+                    listen: false,
+                  ).toggleTheme(value);
                 },
               ),
             ),
@@ -40,11 +57,11 @@ class ProfileScreen extends StatelessWidget {
               leading: const Icon(Icons.info_outline),
               title: const Text('App Info'),
               onTap: () {
-                showAboutDialog(
-                  context: context,
-                  applicationName: 'AniTomo',
-                  applicationVersion: 'v1.0.0',
-                  applicationLegalese: '© 2025 Muhammad',
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AboutScreen(),
+                  ),
                 );
               },
             ),

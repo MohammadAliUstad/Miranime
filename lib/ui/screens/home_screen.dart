@@ -6,7 +6,7 @@ import '../components/featured_carousel.dart';
 import '../components/genre_section.dart';
 import '../loading_skeletons/featured_carousel_skeleton.dart';
 import '../loading_skeletons/genre_section_skeleton.dart';
-import 'search_screen.dart'; // ✅ Import SearchScreen
+import 'search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
